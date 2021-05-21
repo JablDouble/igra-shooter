@@ -7,6 +7,8 @@ public class WeaponSwap : MonoBehaviour
 
     public int currentWeaponIndex = 0;
     public GameObject player;
+    public GameObject gunIcons;
+    public FixedButton ChangeGunButton;
 
     void Start() {
         SelectWeapon();
@@ -16,7 +18,7 @@ public class WeaponSwap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f) {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f || ChangeGunButton.isPressed) {
             if (currentWeaponIndex >= transform.childCount - 1) {
                 currentWeaponIndex = 0;
             } else {
@@ -31,6 +33,7 @@ public class WeaponSwap : MonoBehaviour
 
     void SelectWeapon() {
 
+
         int i = 0;
         foreach (Transform weapon in transform) {
 
@@ -41,6 +44,23 @@ public class WeaponSwap : MonoBehaviour
             }
 
             i++;
+        }
+
+
+        int j = 0;
+        foreach (Transform icon in gunIcons.transform)
+        {
+
+            if (j == currentWeaponIndex)
+            {
+                icon.gameObject.SetActive(true);
+            }
+            else
+            {
+                icon.gameObject.SetActive(false);
+            }
+
+            j++;
         }
     }
 }
