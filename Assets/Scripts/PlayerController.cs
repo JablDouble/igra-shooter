@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 	public DynamicJoystick LeftJoystick;
 	public FixedTouchField CameraJoystick;
 	public FixedButton SitButton;
+	public GameObject JumpButton;
 	// public FixedButton PushButton;
 	public FixedButton ButtonJump;
 
@@ -71,7 +72,7 @@ public class PlayerController : MonoBehaviour
 			} else {
 				movement = Camera.main.transform.right * (LeftJoystick.input.x == 0 ? Input.GetAxis("Horizontal") * (movementSpeed / 2) : LeftJoystick.input.x * (movementSpeed / 2));
 
-				if (Input.GetKeyDown(KeyCode.J)) {
+				if (JumpButton.GetComponent<FixedButton>().isPressed) {
 					ch_animator.SetTrigger("ClimbJump");
 				}
 			}
@@ -118,15 +119,18 @@ public class PlayerController : MonoBehaviour
 		if (!isHang) {
 			RaycastHit hit;
 			if (Physics.Raycast(transform.position + new Vector3(0, 1.4f, 0), transform.forward, out hit, 0.4f)) {
-				
 				if (hit.transform.tag == "CanClimb") {
-					if (Input.GetKeyDown(KeyCode.Space) && isGrounded) {
+					JumpButton.SetActive(true);
+					if (Input.GetKeyDown(KeyCode.Space) && isGrounded || JumpButton.GetComponent<FixedButton>().isPressed && isGrounded) {
 						ch_animator.SetTrigger("Jump");
 						// rb.velocity = new Vector3(0, Mathf.Sqrt(20), 0);
 						isGrounded = false;
 					}
 				}
 
+			} else
+            {
+				JumpButton.SetActive(false);
 			}
 		}
 	}
