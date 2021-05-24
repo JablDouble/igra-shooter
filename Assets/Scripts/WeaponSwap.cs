@@ -18,17 +18,23 @@ public class WeaponSwap : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f || ChangeGunButton.isPressed) {
-            if (currentWeaponIndex >= transform.childCount - 1) {
-                currentWeaponIndex = 0;
-            } else {
-                currentWeaponIndex++;
-            }
 
-            player.GetComponent<PlayerController>().ch_animator.SetInteger("curWeaponRating", currentWeaponIndex + 1);
+    }
 
-            SelectWeapon();
+    public void changeGun()
+    {
+        if (currentWeaponIndex >= transform.childCount - 1)
+        {
+            currentWeaponIndex = 0;
         }
+        else
+        {
+            currentWeaponIndex++;
+        }
+
+        player.GetComponent<PlayerController>().ch_animator.SetInteger("curWeaponRating", currentWeaponIndex + 1);
+
+        SelectWeapon();
     }
 
     void SelectWeapon() {

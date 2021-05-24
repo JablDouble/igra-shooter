@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 	public FixedTouchField CameraJoystick;
 	public FixedButton SitButton;
 	public GameObject JumpButton;
+	public GameObject ActiveButton;
 	// public FixedButton PushButton;
 	public FixedButton ButtonJump;
 
@@ -29,10 +30,14 @@ public class PlayerController : MonoBehaviour
 	private bool isHang = false;
 	private bool isGrounded;
 
+	public AudioClip metalFenceJump, metalFenceClimbing;
+	protected AudioSource AudioSorcePlayer;
+
 	void Start() {
 		player_collider = GetComponent<CapsuleCollider>();
 		rb = GetComponent<Rigidbody>();
 		ch_animator = GetComponent<Animator>();
+		AudioSorcePlayer = GetComponent<AudioSource>();
 	}
 
 	void Update() {
@@ -50,8 +55,10 @@ public class PlayerController : MonoBehaviour
 		HandleMovementInput(isDeath || isPush);
 
 		if (!isSitDown) {
-			JumpOnTheWall();
+			CanJumpOnTheWall();
 		}
+
+		CanClickActiveButton();
 	}
 
 	void TeleportAfterHang() {
@@ -71,10 +78,6 @@ public class PlayerController : MonoBehaviour
 
 			} else {
 				movement = Camera.main.transform.right * (LeftJoystick.input.x == 0 ? Input.GetAxis("Horizontal") * (movementSpeed / 2) : LeftJoystick.input.x * (movementSpeed / 2));
-
-				if (JumpButton.GetComponent<FixedButton>().isPressed) {
-					ch_animator.SetTrigger("ClimbJump");
-				}
 			}
 
 			ch_animator.SetFloat("Horizontal", LeftJoystick.input.y == 0 ? Input.GetAxis("Vertical") : LeftJoystick.input.y);
@@ -116,22 +119,48 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public void JumpOnTheWall() {
+		if (isGrounded)
+		{
+			ch_animator.SetTrigger("Jump");
+			AudioSorcePlayer.PlayOneShot(metalFenceJump);
+			// rb.velocity = new Vector3(0, Mathf.Sqrt(20), 0);
+			isGrounded = false;
+		} 
+		if (isHang) {
+			ch_animator.SetTrigger("ClimbJump");
+			AudioSorcePlayer.PlayOneShot(metalFenceClimbing);
+		}
+	}
+
+	public void CanJumpOnTheWall() {
 		if (!isHang) {
 			RaycastHit hit;
 			if (Physics.Raycast(transform.position + new Vector3(0, 1.4f, 0), transform.forward, out hit, 0.4f)) {
 				if (hit.transform.tag == "CanClimb") {
 					JumpButton.SetActive(true);
-					if (Input.GetKeyDown(KeyCode.Space) && isGrounded || JumpButton.GetComponent<FixedButton>().isPressed && isGrounded) {
-						ch_animator.SetTrigger("Jump");
-						// rb.velocity = new Vector3(0, Mathf.Sqrt(20), 0);
-						isGrounded = false;
-					}
 				}
 
 			} else
             {
 				JumpButton.SetActive(false);
 			}
+		}
+	}
+
+	public void CanClickActiveButton()
+    {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), transform.forward, out hit, 2f))
+		{
+			if (hit.transform.tag == "Active")
+			{
+				ActiveButton.SetActive(true);
+			}
+
+		}
+		else
+		{
+			ActiveButton.SetActive(false);
 		}
 	}
 
