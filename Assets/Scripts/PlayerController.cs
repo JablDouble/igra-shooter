@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
 
 	public DynamicJoystick LeftJoystick;
 	public FixedTouchField CameraJoystick;
-	public FixedButton SitButton;
 	public GameObject JumpButton;
 	public GameObject ActiveButton;
 	// public FixedButton PushButton;
@@ -41,9 +40,6 @@ public class PlayerController : MonoBehaviour
 	}
 
 	void Update() {
-		if (isSitDown != SitButton.isClicked) {
-			Sit(SitButton.isClicked);
-		}
 		// HandlePushItemsInput();
 	}
 
@@ -99,20 +95,20 @@ public class PlayerController : MonoBehaviour
 		// }
 	}
 
-	public void Sit(bool isPressed) {
+	public void Sit() {
 		if (isGrounded) {
-			isSitDown = isPressed;
-
-			if (isSitDown) {
+			if (!isSitDown) {
 				player_collider.height = 1.1f;
 				player_collider.center = new Vector3(0, 0.4f, 0);
 				movementSpeed = movementSpeed / 2.66f;
-				// ch_animator.SetBool("Sit", true);
+				ch_animator.SetBool("Sit", true);
+				isSitDown = true;
 			} else {
 				player_collider.height = 2;
 				player_collider.center = new Vector3(0, 0.9f, 0);
 				movementSpeed = movementSpeed * 2.66f;
-				// ch_animator.SetBool("Sit", false);
+				ch_animator.SetBool("Sit", false);
+				isSitDown = false;
 			}
 
 		}
@@ -154,7 +150,13 @@ public class PlayerController : MonoBehaviour
 		{
 			if (hit.transform.tag == "Active")
 			{
-				ActiveButton.SetActive(true);
+				if(hit.transform.gameObject.GetComponent<Rigidbody>().isKinematic)
+                {
+					ActiveButton.SetActive(true);
+				} else
+                {
+					ActiveButton.SetActive(false);
+				}
 			}
 
 		}
