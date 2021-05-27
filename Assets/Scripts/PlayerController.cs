@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 	public FixedTouchField CameraJoystick;
 	public GameObject JumpButton;
 	public GameObject ActiveButton;
+
+	public GameObject FinishButton;
 	// public FixedButton PushButton;
 	public FixedButton ButtonJump;
 
@@ -159,9 +161,14 @@ public class PlayerController : MonoBehaviour
 				}
 			}
 
+			if (hit.transform.tag == "Finish")
+			{
+				FinishButton.SetActive(true);
+			}
 		}
 		else
 		{
+			FinishButton.SetActive(false);
 			ActiveButton.SetActive(false);
 		}
 	}

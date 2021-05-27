@@ -17,7 +17,10 @@ public class ChangeScene : MonoBehaviour
     public void Start()
     {
         animFade = Canvas.GetComponent<Animator>();
-        musicFade = MainMusic.GetComponent<Animator>();
+        if (MainMusic)
+        {
+            musicFade = MainMusic.GetComponent<Animator>();
+        }
     }
 
     public void setScene(int sceneID)
@@ -29,7 +32,10 @@ public class ChangeScene : MonoBehaviour
     {
         blackImage.gameObject.SetActive(true);
         animFade.SetBool("isFade", true);
-        musicFade.SetBool("isMusicTransition", true);
+        if(musicFade)
+        {
+            musicFade.SetBool("isMusicTransition", true);
+        }
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(sceneID);
     }
